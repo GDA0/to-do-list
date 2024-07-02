@@ -1,7 +1,9 @@
 // Import our custom CSS
-import "./index.scss";
-import UI from "./views/ui";
+import './index.scss'
+import * as bootstrap from 'bootstrap'
 
-const newUI = new UI();
+import UI from './views/ui'
 
-document.addEventListener("DOMContentLoaded", () => {});
+const newUI = new UI()
+
+document.addEventListener('DOMContentLoaded', () => {})
