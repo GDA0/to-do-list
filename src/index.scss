@@ -1,5 +1,6 @@
-// Import all of Bootstrap's CSS
+// Import all of Bootstrap's CSS and Icons
 @import "bootstrap/scss/bootstrap";
+@import '~bootstrap-icons/font/bootstrap-icons.css';
 
 /* Import Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap");
@@ -16,21 +17,4 @@ h6 {
 
 body {
   font-family: "Roboto", sans-serif;
-}
-
-.navbar-toggler {
-  border: none;
-
-  &:focus {
-    box-shadow: unset;
-  }
-}
-
-main a,
-footer a {
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }
