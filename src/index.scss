@@ -43,11 +43,11 @@ p {
 // Active style transition
 .active-style {
   will-change: contents;
-  transition: transform 0.3s;
-}
+  transition: transform 0.3s ease;
 
-.active-style:active {
-  transform: scale(0.95);
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // Specific styling for project items
@@ -58,4 +58,23 @@ p {
   border-radius: 4px;
   gap: 8px;
   @include hover-effect; // Reuse hover mixin
+}
+
+// Sidebar styles
+.sidebar {
+  transition: transform 0.3s ease;
+}
+
+.sidebar-closed {
+  transform: translateX(-100%);
+}
+
+.sidebar-toggle {
+  right: 4px;
+  transition: transform 0.3s ease;
+  will-change: contents;
+
+  &:active {
+    transform: scale(0.95);
+  }
 }

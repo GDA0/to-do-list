@@ -27,21 +27,11 @@
   <body>
     <main class="d-flex overflow-hidden">
       <div class="sidebar px-3 py-2 bg-light" style="width: 270px">
-        <div class="d-flex align-items-center justify-content-between">
-          <div
-            class="d-flex align-items-center gap-1 hover-style rounded py-1 px-2"
-          >
-            <img
-              src="assets/images/logo.png"
-              alt="Logo"
-              width="36"
-              height="30"
-            />
-            <h5>To-Do List</h5>
-          </div>
-          <i
-            class="bi bi-layout-sidebar py-1 px-2 h4 rounded hover-style active-style"
-          ></i>
+        <div
+          class="d-flex align-items-center gap-1 hover-style rounded py-1 px-2"
+        >
+          <img src="assets/images/logo.png" alt="Logo" width="36" height="30" />
+          <h5>To-Do List</h5>
         </div>
         <div
           class="d-flex align-items-center py-1 px-2 gap-2 mt-3 mb-2 hover-style rounded active-style"
@@ -74,6 +64,9 @@
           <i class="bi bi-plus h4"></i>
         </div>
       </div>
+      <i
+        class="bi bi-layout-sidebar mt-1 py-1 px-2 h4 rounded hover-style active-style sidebar-toggle position-absolute"
+      ></i>
       <div class="main-contents flex-grow-1 min-vh-100"></div>
     </main>
   </body>
