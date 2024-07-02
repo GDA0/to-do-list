@@ -2,14 +2,17 @@
 @import "bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 
-/* Import Fonts */
+// Import Fonts
 @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap");
 
-:root {
-  --hover-color: #e2e6ea;
+// Variables
+$hover-color: #e2e6ea;
+
+// Standards
+body {
+  font-family: "Roboto", sans-serif;
 }
 
-/* Standards */
 h1,
 h2,
 h3,
@@ -24,15 +27,20 @@ p {
   margin-bottom: 0;
 }
 
-body {
-  font-family: "Roboto", sans-serif;
+// Mixin for hover effect
+@mixin hover-effect {
+  &:hover {
+    background-color: $hover-color;
+    cursor: pointer;
+  }
 }
 
-.hover-style:hover {
-  background-color: var(--hover-color);
-  cursor: pointer;
+// Apply hover effect to elements
+.hover-style {
+  @include hover-effect;
 }
 
+// Active style transition
 .active-style {
   will-change: contents;
   transition: transform 0.3s;
@@ -42,7 +50,12 @@ body {
   transform: scale(0.95);
 }
 
-.default-projects > div {
+// Specific styling for project items
+.project-item {
   display: flex;
   align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  gap: 8px;
+  @include hover-effect; // Reuse hover mixin
 }
