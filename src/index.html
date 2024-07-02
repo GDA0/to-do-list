@@ -25,8 +25,10 @@
     <link rel="manifest" href="assets/favicons/site.webmanifest" />
   </head>
   <body>
-    <main class="d-flex overflow-hidden">
-      <div class="sidebar px-3 py-2 bg-light" style="width: 270px">
+    <main class="d-flex min-vh-100 overflow-hidden">
+      <div
+        class="sidebar px-3 py-2 bg-light position-fixed bottom-0 top-0 start-0"
+      >
         <div
           class="d-flex align-items-center gap-1 hover-style rounded py-1 px-2"
         >
@@ -45,7 +47,7 @@
             <p>Inbox</p>
           </div>
           <div class="project-item">
-            <i class="bi bi-calendar-check h5"></i>
+            <i class="bi bi-calendar h5"></i>
             <p>Today</p>
           </div>
           <div class="project-item">
@@ -56,6 +58,10 @@
             <i class="bi bi-calendar2 h5"></i>
             <p>This week</p>
           </div>
+          <div class="project-item">
+            <i class="bi bi-calendar-check h5"></i>
+            <p>Completed</p>
+          </div>
         </div>
         <div
           class="d-flex align-items-center mt-3 px-2 py-1 rounded hover-style justify-content-between"
@@ -65,9 +71,9 @@
         </div>
       </div>
       <i
-        class="bi bi-layout-sidebar mt-1 py-1 px-2 h4 rounded hover-style active-style sidebar-toggle position-absolute"
+        class="bi bi-layout-sidebar mt-1 py-1 px-2 h4 rounded hover-style active-style sidebar-toggler position-fixed"
       ></i>
-      <div class="main-contents flex-grow-1 min-vh-100"></div>
+      <div class="main-contents flex-grow-1"></div>
     </main>
   </body>
 </html>

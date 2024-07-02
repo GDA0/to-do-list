@@ -1,11 +1,13 @@
 // Import our custom CSS
-import "./index.scss";
+import './index.scss'
 
-document.addEventListener("DOMContentLoaded", function () {
-  const sidebar = document.querySelector(".sidebar");
-  const sidebarToggle = document.querySelector(".sidebar-toggle");
+document.addEventListener('DOMContentLoaded', function () {
+  const sidebar = document.querySelector('.sidebar')
+  const sidebarToggler = document.querySelector('.sidebar-toggler')
+  const mainContents = document.querySelector('.main-contents')
 
-  sidebarToggle.addEventListener("click", function () {
-    sidebar.classList.toggle("sidebar-closed");
-  });
-});
+  sidebarToggler.addEventListener('click', function () {
+    sidebar.classList.toggle('sidebar-hide')
+    mainContents.classList.toggle('full-width')
+  })
+})

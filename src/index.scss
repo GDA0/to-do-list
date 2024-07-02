@@ -62,14 +62,16 @@ p {
 
 // Sidebar styles
 .sidebar {
+  will-change: contents;
   transition: transform 0.3s ease;
+  width: clamp(240px, 270px, 300px);
 }
 
-.sidebar-closed {
+.sidebar-hide {
   transform: translateX(-100%);
 }
 
-.sidebar-toggle {
+.sidebar-toggler {
   right: 4px;
   transition: transform 0.3s ease;
   will-change: contents;
@@ -77,4 +79,14 @@ p {
   &:active {
     transform: scale(0.95);
   }
+}
+
+.main-contents {
+  margin-left: clamp(240px, 270px, 300px);
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.full-width {
+  margin-left: 0;
+  min-width: 100%;
 }
