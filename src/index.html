@@ -26,5 +26,57 @@
 
     <title>To-Do List</title>
   </head>
-  <body></body>
+  <body>
+    <main class="d-flex overflow-hidden">
+      <div class="sidebar px-3 py-2 bg-light" style="width: 270px">
+        <div class="d-flex align-items-center justify-content-between">
+          <div
+            class="d-flex align-items-center gap-1 hover-style rounded py-1 px-2"
+          >
+            <img
+              src="assets/images/logo.png"
+              alt="Logo"
+              width="36"
+              height="30"
+            />
+            <h5>To-Do List</h5>
+          </div>
+          <i
+            class="bi bi-layout-sidebar py-1 px-2 h4 rounded hover-style active-style"
+          ></i>
+        </div>
+        <div
+          class="d-flex align-items-center py-1 px-2 gap-2 mt-3 mb-2 hover-style rounded active-style"
+        >
+          <i class="bi bi-plus-circle-fill h5"></i>
+          <p>Add task</p>
+        </div>
+        <div class="default-projects">
+          <div class="px-2 py-1 rounded hover-style gap-2">
+            <i class="bi bi-inbox h5"></i>
+            <p>Inbox</p>
+          </div>
+          <div class="px-2 py-1 rounded hover-style gap-2">
+            <i class="bi bi-calendar-check h5"></i>
+            <p>Today</p>
+          </div>
+          <div class="px-2 py-1 rounded hover-style gap-2">
+            <i class="bi bi-calendar-event h5"></i>
+            <p>Tomorrow</p>
+          </div>
+          <div class="px-2 py-1 rounded hover-style gap-2">
+            <i class="bi bi-calendar2 h5"></i>
+            <p>This week</p>
+          </div>
+        </div>
+        <div
+          class="d-flex align-items-center mt-3 px-2 py-1 rounded hover-style justify-content-between"
+        >
+          <h5 class="">My Projects</h5>
+          <i class="bi bi-plus h4"></i>
+        </div>
+      </div>
+      <div class="main-contents flex-grow-1 min-vh-100"></div>
+    </main>
+  </body>
 </html>

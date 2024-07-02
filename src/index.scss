@@ -1,9 +1,13 @@
 // Import all of Bootstrap's CSS and Icons
 @import "bootstrap/scss/bootstrap";
-@import '~bootstrap-icons/font/bootstrap-icons.css';
+@import "~bootstrap-icons/font/bootstrap-icons.css";
 
 /* Import Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap");
+
+:root {
+  --hover-color: #e2e6ea;
+}
 
 /* Standards */
 h1,
@@ -13,8 +17,32 @@ h4,
 h5,
 h6 {
   font-family: "Montserrat", sans-serif;
+  margin-bottom: 0;
+}
+
+p {
+  margin-bottom: 0;
 }
 
 body {
   font-family: "Roboto", sans-serif;
+}
+
+.hover-style:hover {
+  background-color: var(--hover-color);
+  cursor: pointer;
+}
+
+.active-style {
+  will-change: contents;
+  transition: transform 0.3s;
+}
+
+.active-style:active {
+  transform: scale(0.95);
+}
+
+.default-projects > div {
+  display: flex;
+  align-items: center;
 }
