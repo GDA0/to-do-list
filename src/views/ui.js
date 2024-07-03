@@ -88,6 +88,17 @@ export default class UI {
       pBtn.classList.remove('focus')
     })
     projectBtn.classList.add('focus')
+
+    const projectId = this.getProjectId(projectBtn)
+    this.loadTasks(projectId)
+  }
+
+  static getProjectId (projectBtn) {
+    return +projectBtn.querySelector('p').id
+  }
+
+  static loadTasks (projectId) {
+    const project = Storage.getProject(projectId)
   }
 
   static populateParentProjectSelect () {

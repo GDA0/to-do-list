@@ -105,3 +105,24 @@ p {
   margin-left: 0;
   min-width: 100%;
 }
+
+.task {
+  cursor: pointer;
+
+  .toggle-status {
+    cursor: pointer;
+  }
+
+  .description,
+  .due-date,
+  .priority {
+    font-size: 0.8rem;
+  }
+
+  .due-date,
+  .priority {
+    background-color: $hover-color;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+}
