@@ -1,7 +1,8 @@
 export default class Project {
-  constructor (name) {
+  constructor (name, customId = null) {
     this.name = name
     this.tasks = []
+    this.id = customId || Date.now()
   }
 
   addTask (task) {

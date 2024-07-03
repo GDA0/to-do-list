@@ -5,8 +5,10 @@ export default class Storage {
 
   // Create
   addProject (project) {
-    this.projects.push(project)
-    this._commit()
+    if (!this.projects.some((proj) => proj.id === project.id)) {
+      this.projects.push(project)
+      this._commit()
+    }
   }
 
   addTaskToProject (task, projectId) {
