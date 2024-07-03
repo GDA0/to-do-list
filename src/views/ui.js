@@ -9,6 +9,8 @@ export default class UI {
     this.mainContents = document.querySelector('.main-contents')
     this.addTaskForm = document.querySelector('.add-task-form')
     this.addProjectForm = document.querySelector('.add-project-form')
+    this.addTaskBtn = document.querySelector('.add-task-btn')
+    this.parentProjectSelect = document.querySelector('.parent-project-select')
 
     this.sidebarToggler.addEventListener('click', () => {
       this.sidebar.classList.toggle('sidebar-hide')
@@ -59,5 +61,29 @@ export default class UI {
         this.addProjectForm.classList.add('was-validated')
       }
     })
+
+    this.addTaskBtn.addEventListener('click', () => {
+      this.populateParentProjectSelect()
+    })
+  }
+
+  populateParentProjectSelect () {
+    const projects = Storage.getProjects()
+    this.parentProjectSelect.innerHTML = ''
+
+    projects
+      .filter((project) => ![2, 3, 4, 5].includes(project.id))
+      .forEach((project) => {
+        const option = document.createElement('option')
+        option.value = project.id.toString()
+        option.textContent =
+          project.name.length > 30
+            ? project.name.slice(0, 30) + '...'
+            : project.name
+        if (project.id === 1) {
+          option.selected = true
+        }
+        this.parentProjectSelect.appendChild(option)
+      })
   }
 }
