@@ -54,6 +54,7 @@ p {
 .project-item {
   display: flex;
   align-items: center;
+  margin-bottom: 2px;
   padding: 4px 8px;
   border-radius: 4px;
   gap: 8px;
@@ -81,6 +82,20 @@ p {
   }
 }
 
+.project-btn {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  will-change: contents;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.focus {
+  background-color: $hover-color;
+}
+
+// Main contents styles
 .main-contents {
   margin-left: clamp(240px, 270px, 300px);
   transition: margin-left 0.3s ease, width 0.3s ease;

@@ -11,6 +11,7 @@ export default class UI {
     this.addProjectForm = document.querySelector('.add-project-form')
     this.addTaskBtn = document.querySelector('.add-task-btn')
     this.parentProjectSelect = document.querySelector('.parent-project-select')
+    this.projectBtns = document.querySelectorAll('.project-btn')
 
     this.addEventListeners()
   }
@@ -26,6 +27,11 @@ export default class UI {
     this.addTaskBtn.addEventListener('click', () =>
       this.populateParentProjectSelect()
     )
+    this.projectBtns.forEach((projectBtn) => {
+      projectBtn.addEventListener('click', () => {
+        this.handleProjectBtnClick(projectBtn)
+      })
+    })
   }
 
   static toggleSidebar () {
@@ -75,6 +81,13 @@ export default class UI {
       event.stopPropagation()
       this.addProjectForm.classList.add('was-validated')
     }
+  }
+
+  static handleProjectBtnClick (projectBtn) {
+    this.projectBtns.forEach((pBtn) => {
+      pBtn.classList.remove('focus')
+    })
+    projectBtn.classList.add('focus')
   }
 
   static populateParentProjectSelect () {
