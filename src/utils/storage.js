@@ -1,59 +1,65 @@
+import Project from '../models/project'
+
 export default class Storage {
-  constructor () {
-    this.projects = JSON.parse(localStorage.getItem('projects')) || []
-  }
+  static projects = JSON.parse(localStorage.getItem('projects')) || []
 
   // Create
-  addProject (project) {
+  static addProject (project) {
     if (!this.projects.some((proj) => proj.id === project.id)) {
       this.projects.push(project)
       this._commit()
     }
   }
 
-  addTaskToProject (task, projectId) {
+  static addTaskToProject (task, projectId) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
-    const inbox = this.projects.find((proj) => proj.id === 0)
 
-    if (parentProject && inbox) {
-      parentProject.addTask(task)
-      inbox.addTask(task)
+    if (parentProject) {
+      const newParentProject = new Project(
+        parentProject.name,
+        parentProject.id
+      )
+
+      parentProject.tasks.forEach((task) => {
+        newParentProject.addTask(task)
+      })
+
+      newParentProject.addTask(task)
+
+      Object.assign(parentProject, newParentProject)
+
       this._commit()
     }
   }
 
   // Read
-  getProjects () {
+  static getProjects () {
     return this.projects
   }
 
-  getProject (projectId) {
+  static getProject (projectId) {
     return this.projects.find((proj) => proj.id === projectId)
   }
 
   // Update
-  _commit () {
+  static _commit () {
     localStorage.setItem('projects', JSON.stringify(this.projects))
   }
 
-  editTaskStatus (taskId, projectId) {
+  static editTaskStatus (taskId, projectId) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
-    const inbox = this.projects.find((proj) => proj.id === 0)
 
-    if (parentProject && inbox) {
+    if (parentProject) {
       parentProject.toggleTaskStatus(taskId)
-      inbox.toggleTaskStatus(taskId)
       this._commit()
     }
   }
 
-  editTask (taskId, projectId, editedTask) {
+  static editTask (taskId, projectId, editedTask) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
-    const inbox = this.projects.find((proj) => proj.id === 0)
 
-    if (parentProject && inbox) {
+    if (parentProject) {
       parentProject.editTask(taskId, editedTask)
-      inbox.editTask(taskId, editedTask)
 
       // If parent project changed
       if (editedTask.parentProjectId !== projectId) {
@@ -64,7 +70,7 @@ export default class Storage {
     }
   }
 
-  editProjectName (projectId, editedProjectName) {
+  static editProjectName (projectId, editedProjectName) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
 
     if (parentProject) {
@@ -74,27 +80,16 @@ export default class Storage {
   }
 
   // Delete
-  removeTaskFromProject (taskId, projectId) {
+  static removeTaskFromProject (taskId, projectId) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
-    const inbox = this.projects.find((proj) => proj.id === 0)
 
-    if (parentProject && inbox) {
+    if (parentProject) {
       parentProject.removeTask(taskId)
-      inbox.removeTask(taskId)
       this._commit()
     }
   }
 
-  removeProject (projectId) {
-    const parentProject = this.projects.find((proj) => proj.id === projectId)
-    const inbox = this.projects.find((proj) => proj.id === 0)
-
-    if (parentProject && inbox) {
-      parentProject.tasks.forEach((task) => {
-        inbox.removeTask(task.id)
-      })
-    }
-
+  static removeProject (projectId) {
     this.projects = this.projects.filter((proj) => proj.id !== projectId)
     this._commit()
   }

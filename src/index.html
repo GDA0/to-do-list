@@ -98,15 +98,18 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form>
+            <form novalidate class="add-task-form">
               <div class="form-floating mb-3">
                 <input
                   type="text"
                   class="form-control"
                   id="name"
                   placeholder="Finish this project"
+                  required
                 />
                 <label for="name">Task name</label>
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please enter task name</div>
               </div>
               <div class="form-floating mb-3">
                 <input
@@ -114,21 +117,27 @@
                   class="form-control"
                   id="description"
                   placeholder="You'll need to apply self-discipline and excellence to be able to get it done"
+                  required
                 />
                 <label for="description">Description</label>
+                <div class="valid-feedback">Looks good!</div>
+                <div class="invalid-feedback">Please enter description</div>
               </div>
               <div class="row mb-3">
                 <div class="col">
-                  <div class="form-label">Due date</div>
+                  <label class="form-label" for="due-date">Due date</label>
                   <input
                     type="date"
                     class="form-control"
-                    placeholder="First name"
-                    aria-label="First name"
+                    aria-label="Due date"
+                    id="due-date"
+                    required
                   />
+                  <div class="valid-feedback">Looks good!</div>
+                  <div class="invalid-feedback">Please enter a valid date</div>
                 </div>
                 <div class="col">
-                  <div class="form-label" for="priority">Priority</div>
+                  <label class="form-label" for="priority">Priority</label>
                   <select
                     class="form-select"
                     aria-label="Select priority"
@@ -138,6 +147,7 @@
                     <option value="medium" selected>Medium</option>
                     <option value="low">Low</option>
                   </select>
+                  <div class="valid-feedback">Looks good!</div>
                 </div>
               </div>
               <div>
@@ -145,14 +155,19 @@
                 <select
                   class="form-select"
                   aria-label="Select parent project"
-                  id="parent-project"
+                  id="parent-project-id"
                 >
                   <option value="1">Inbox</option>
                   <option value="2">Today</option>
                   <option value="3">Tomorrow</option>
                   <option value="4">This week</option>
                 </select>
+                <div class="valid-feedback">Looks good!</div>
               </div>
+              <button
+                type="submit"
+                class="submit-add-task-form d-none"
+              ></button>
             </form>
           </div>
           <div class="modal-footer">
@@ -163,7 +178,13 @@
             >
               Cancel
             </button>
-            <button type="button" class="btn btn-primary">Add</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="document.querySelector('.submit-add-task-form').click()"
+            >
+              Add
+            </button>
           </div>
         </div>
       </div>
