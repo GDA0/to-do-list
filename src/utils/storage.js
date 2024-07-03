@@ -3,7 +3,7 @@ export default class Storage {
     this.projects = JSON.parse(localStorage.getItem('projects')) || []
   }
 
-  //   Create
+  // Create
   addProject (project) {
     this.projects.push(project)
     this._commit()
@@ -20,7 +20,7 @@ export default class Storage {
     }
   }
 
-  //   Read
+  // Read
   getProjects () {
     return this.projects
   }
@@ -29,7 +29,7 @@ export default class Storage {
     return this.projects.find((proj) => proj.id === projectId)
   }
 
-  //   Update
+  // Update
   _commit () {
     localStorage.setItem('projects', JSON.stringify(this.projects))
   }
@@ -39,8 +39,8 @@ export default class Storage {
     const inbox = this.projects.find((proj) => proj.id === 0)
 
     if (parentProject && inbox) {
-      parentProject.editTaskStatus(taskId)
-      inbox.editTaskStatus(taskId)
+      parentProject.toggleTaskStatus(taskId)
+      inbox.toggleTaskStatus(taskId)
       this._commit()
     }
   }
@@ -53,7 +53,7 @@ export default class Storage {
       parentProject.editTask(taskId, editedTask)
       inbox.editTask(taskId, editedTask)
 
-      //   Parent project changed
+      // If parent project changed
       if (editedTask.parentProjectId !== projectId) {
         this.removeTaskFromProject(taskId, projectId)
         this.addTaskToProject(editedTask, editedTask.parentProjectId)
@@ -71,7 +71,7 @@ export default class Storage {
     }
   }
 
-  //   Delete
+  // Delete
   removeTaskFromProject (taskId, projectId) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
     const inbox = this.projects.find((proj) => proj.id === 0)
@@ -85,12 +85,15 @@ export default class Storage {
 
   removeProject (projectId) {
     const parentProject = this.projects.find((proj) => proj.id === projectId)
-    const index = this.projects.find((proj) => proj.id === 0)
+    const inbox = this.projects.find((proj) => proj.id === 0)
 
-    parentProject.tasks.forEach((task) => {
-      index.tasks = index.tasks.filter((iTask) => iTask.id !== task.id)
-    })
+    if (parentProject && inbox) {
+      parentProject.tasks.forEach((task) => {
+        inbox.removeTask(task.id)
+      })
+    }
 
+    this.projects = this.projects.filter((proj) => proj.id !== projectId)
     this._commit()
   }
 }
