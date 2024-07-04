@@ -12,6 +12,7 @@ export default class UI {
     this.addTaskBtn = document.querySelector('.add-task-btn')
     this.parentProjectSelect = document.querySelector('.parent-project-select')
     this.projectBtns = document.querySelectorAll('.project-btn')
+    this.mainContentsContainer = this.mainContents.querySelector('.container')
 
     this.addEventListeners()
   }
@@ -99,6 +100,67 @@ export default class UI {
 
   static loadTasks (projectId) {
     const project = Storage.getProject(projectId)
+    const tasks = project.tasks
+    this.mainContentsContainer.innerHTML = ''
+
+    const projectNameH2 = document.createElement('h2')
+    projectNameH2.textContent = project.name
+    this.mainContentsContainer.appendChild(projectNameH2)
+
+    const tasksUl = document.createElement('ul')
+    tasksUl.classList.add('list-group', 'list-group-flush', 'my-3')
+
+    tasks.forEach((task) => {
+      const taskLi = document.createElement('li')
+      taskLi.classList.add('list-group-item', 'd-flex', 'task')
+
+      const toggleStatusInput = document.createElement('input')
+      toggleStatusInput.type = 'checkbox'
+      toggleStatusInput.classList.add(
+        'form-check-input',
+        'me-3',
+        'toggle-status'
+      )
+      taskLi.appendChild(toggleStatusInput)
+
+      const taskDetailsDiv = document.createElement('div')
+
+      const taskNameH6 = document.createElement('h6')
+      taskNameH6.textContent = task.name
+      taskDetailsDiv.appendChild(taskNameH6)
+
+      const taskDescriptionP = document.createElement('p')
+      taskDescriptionP.classList.add('description')
+      taskDescriptionP.textContent = task.description
+      taskDetailsDiv.appendChild(taskDescriptionP)
+
+      const dueDateAndPriorityDiv = document.createElement('div')
+      dueDateAndPriorityDiv.classList.add('d-flex', 'gap-2')
+
+      const dueDateP = document.createElement('p')
+      dueDateP.classList.add('due-date')
+      dueDateP.textContent = `Due Date: ${task.dueDate}`
+      dueDateAndPriorityDiv.appendChild(dueDateP)
+
+      const priorityP = document.createElement('p')
+      priorityP.classList.add('priority')
+      priorityP.textContent = `Priority: ${task.priority.toUpperCase()}`
+      const colorType =
+        task.priority === 'high'
+          ? 'bg-danger-subtle'
+          : task.priority === 'medium'
+            ? 'bg-warning-subtle'
+            : 'bg-success-subtle'
+      priorityP.classList.add(colorType)
+      dueDateAndPriorityDiv.appendChild(priorityP)
+
+      taskDetailsDiv.appendChild(dueDateAndPriorityDiv)
+      taskLi.appendChild(taskDetailsDiv)
+
+      tasksUl.appendChild(taskLi)
+    })
+
+    this.mainContentsContainer.appendChild(tasksUl)
   }
 
   static populateParentProjectSelect () {
