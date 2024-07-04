@@ -161,6 +161,39 @@ export default class UI {
     })
 
     this.mainContentsContainer.appendChild(tasksUl)
+    if (![2, 3, 4, 5].includes(projectId)) {
+      this.addAddTaskBtnDiv()
+    }
+  }
+
+  static addAddTaskBtnDiv () {
+    const addTaskBtnDiv = document.createElement('div')
+    addTaskBtnDiv.classList.add(
+      'd-flex',
+      'align-items-center',
+      'py-1',
+      'px-2',
+      'gap-2',
+      'mt-3',
+      'mb-2',
+      'hover-style',
+      'rounded',
+      'active-style',
+      'add-task-btn'
+    )
+    addTaskBtnDiv.setAttribute('data-bs-toggle', 'modal')
+    addTaskBtnDiv.setAttribute('data-bs-target', '#add-task-modal')
+    addTaskBtnDiv.style.maxWidth = 'max-content'
+
+    const iconElement = document.createElement('i')
+    iconElement.classList.add('bi', 'bi-plus-circle-fill', 'h5')
+    addTaskBtnDiv.appendChild(iconElement)
+
+    const pElement = document.createElement('p')
+    pElement.textContent = 'Add task'
+    addTaskBtnDiv.appendChild(pElement)
+
+    this.mainContentsContainer.appendChild(addTaskBtnDiv)
   }
 
   static populateParentProjectSelect () {

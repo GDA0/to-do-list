@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newProject.addTask(newTask)
       })
     }
+
     Storage.addProject(newProject)
 
     document.querySelector('.project-btn').click()
