@@ -14,6 +14,7 @@ export default class UI {
     this.parentProjectSelect = document.querySelector('.parent-project-select')
     this.projectBtns = document.querySelectorAll('.project-btn')
     this.mainContentsContainer = this.mainContents.querySelector('.container')
+    this.myProjectsDiv = document.querySelector('.my-projects')
 
     this.addEventListeners()
   }
@@ -81,17 +82,48 @@ export default class UI {
   static handleProjectFormSubmit (event) {
     event.preventDefault()
 
-    if (this.addProjectForm.checkVisibility()) {
+    if (this.addProjectForm.checkValidity()) {
       const name = this.addProjectForm.querySelector('#name').value
       const newProject = new Project(name)
       Storage.addProject(newProject)
 
       this.addProjectForm.reset()
       this.addProjectForm.classList.remove('was-validated')
+
+      const addProjectModal = this.addProjectForm.closest('.modal')
+      this.hideModal(addProjectModal)
+
+      this.loadMyProjects()
     } else {
       event.stopPropagation()
       this.addProjectForm.classList.add('was-validated')
     }
+  }
+
+  static loadMyProjects () {
+    this.myProjectsDiv.innerHTML = ''
+    const projects = Storage.getProjects()
+
+    projects.forEach((project) => {
+      if (![1, 2, 3, 4, 5].includes(project.id)) {
+        const projectItemDiv = document.createElement('div')
+        projectItemDiv.classList.add('project-item', 'project-btn')
+
+        const iconElement = document.createElement('i')
+        iconElement.classList.add('bi', 'bi-collection', 'h5')
+
+        const paragraphElement = document.createElement('p')
+        paragraphElement.id = project.id
+        paragraphElement.textContent = project.name
+
+        projectItemDiv.appendChild(iconElement)
+        projectItemDiv.appendChild(paragraphElement)
+
+        this.myProjectsDiv.appendChild(projectItemDiv)
+      }
+    })
+
+    this.initialize()
   }
 
   static handleProjectBtnClick (projectBtn) {

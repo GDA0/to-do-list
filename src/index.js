@@ -89,7 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     Storage.addProject(newProject)
-
-    document.querySelector('.project-btn').click()
   })
+
+  // Click first project btn which is Inbox
+  document.querySelector('.project-btn').click()
+
+  UI.loadMyProjects()
 })
