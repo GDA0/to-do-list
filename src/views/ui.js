@@ -1,6 +1,7 @@
 import Storage from '../utils/storage'
 import Task from '../models/task'
 import Project from '../models/project'
+import * as bootstrap from 'bootstrap'
 
 export default class UI {
   static initialize () {
@@ -62,10 +63,19 @@ export default class UI {
 
       this.addTaskForm.reset()
       this.addTaskForm.classList.remove('was-validated')
+
+      const addTaskModal = this.addTaskForm.closest('.modal')
+      this.hideModal(addTaskModal)
+
+      this.loadTasks(parentProjectId)
     } else {
       event.stopPropagation()
       this.addTaskForm.classList.add('was-validated')
     }
+  }
+
+  static hideModal (modal) {
+    bootstrap.Modal.getInstance(modal).hide()
   }
 
   static handleProjectFormSubmit (event) {
