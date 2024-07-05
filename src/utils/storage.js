@@ -1,96 +1,76 @@
 import Project from '../models/project'
 
 export default class Storage {
-  static projects = JSON.parse(localStorage.getItem('projects')) || []
-
-  // Create
-  static addProject (project) {
-    if (!this.projects.some((proj) => proj.id === project.id)) {
-      this.projects.push(project)
-      this._commit()
-    }
+  static loadProjects () {
+    const projects = JSON.parse(localStorage.getItem('projects')) || []
+    return projects.map((project) => Project.fromJSON(project))
   }
 
-  static addTaskToProject (task, projectId) {
-    const parentProject = this.projects.find((proj) => proj.id === projectId)
-
-    if (parentProject) {
-      const newParentProject = new Project(
-        parentProject.name,
-        parentProject.id
-      )
-
-      parentProject.tasks.forEach((task) => {
-        newParentProject.addTask(task)
-      })
-
-      newParentProject.addTask(task)
-
-      Object.assign(parentProject, newParentProject)
-
-      this._commit()
-    }
+  static saveProjects (projects) {
+    localStorage.setItem('projects', JSON.stringify(projects))
   }
 
-  // Read
   static getProjects () {
-    return this.projects
+    return this.loadProjects()
   }
 
   static getProject (projectId) {
-    return this.projects.find((proj) => proj.id === projectId)
+    const projects = this.loadProjects()
+    return projects.find((proj) => proj.id === projectId)
   }
 
-  // Update
-  static _commit () {
-    localStorage.setItem('projects', JSON.stringify(this.projects))
-  }
-
-  static editTaskStatus (taskId, projectId) {
-    const parentProject = this.projects.find((proj) => proj.id === projectId)
-
-    if (parentProject) {
-      parentProject.toggleTaskStatus(taskId)
-      this._commit()
+  static addProject (project) {
+    const projects = this.loadProjects()
+    if (!projects.some((proj) => proj.id === project.id)) {
+      projects.push(project)
+      this.saveProjects(projects)
     }
   }
 
-  static editTask (taskId, projectId, editedTask) {
-    const parentProject = this.projects.find((proj) => proj.id === projectId)
-
-    if (parentProject) {
-      parentProject.editTask(taskId, editedTask)
-
-      // If parent project changed
-      if (editedTask.parentProjectId !== projectId) {
-        this.removeTaskFromProject(taskId, projectId)
-        this.addTaskToProject(editedTask, editedTask.parentProjectId)
-      }
-      this._commit()
-    }
-  }
-
-  static editProjectName (projectId, editedProjectName) {
-    const parentProject = this.projects.find((proj) => proj.id === projectId)
-
-    if (parentProject) {
-      parentProject.editProjectName(editedProjectName)
-      this._commit()
-    }
-  }
-
-  // Delete
-  static removeTaskFromProject (taskId, projectId) {
-    const parentProject = this.projects.find((proj) => proj.id === projectId)
-
-    if (parentProject) {
-      parentProject.removeTask(taskId)
-      this._commit()
+  static updateProject (updatedProject) {
+    const projects = this.loadProjects()
+    const projectIndex = projects.findIndex(
+      (proj) => proj.id === updatedProject.id
+    )
+    if (projectIndex !== -1) {
+      projects[projectIndex] = updatedProject
+      this.saveProjects(projects)
     }
   }
 
   static removeProject (projectId) {
-    this.projects = this.projects.filter((proj) => proj.id !== projectId)
-    this._commit()
+    let projects = this.loadProjects()
+    projects = projects.filter((proj) => proj.id !== projectId)
+    this.saveProjects(projects)
+  }
+
+  static addTaskToProject (task, projectId) {
+    const projects = this.loadProjects()
+    const project = projects.find((proj) => proj.id === projectId)
+    if (project) {
+      project.addTask(task)
+      this.updateProject(project)
+    }
+  }
+
+  static updateTask (taskId, projectId, updatedTask) {
+    const project = this.getProject(projectId)
+    if (project) {
+      if (projectId !== updatedTask.parentProjectId) {
+        this.removeTaskFromProject(taskId, projectId)
+        this.addTaskToProject(updatedTask, updatedTask.parentProjectId)
+      } else {
+        project.editTask(taskId, updatedTask)
+        this.updateProject(project)
+      }
+    }
+  }
+
+  static removeTaskFromProject (taskId, projectId) {
+    const project = this.getProject(projectId)
+    if (project) {
+      project.removeTask(taskId)
+      this.updateProject(project)
+    }
   }
 }

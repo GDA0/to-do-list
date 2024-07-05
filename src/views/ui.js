@@ -5,44 +5,56 @@ import * as bootstrap from 'bootstrap'
 
 export default class UI {
   static initialize () {
+    this.cacheDOMElements()
     this.addEventListeners()
     this.loadMyProjects()
     this.addNumOfTasksBadges()
   }
 
-  static addEventListeners () {
-    const sidebarToggler = document.querySelector('.sidebar-toggler')
-    const addTaskForm = document.querySelector('.add-task-form')
-    const addProjectForm = document.querySelector('.add-project-form')
-    const addTaskBtn = document.querySelector('.add-task-btn')
-    const projectItems = document.querySelectorAll('.project-item')
-    const closeModalBtns = document.querySelectorAll('.close-modal')
+  static cacheDOMElements () {
+    this.sidebarToggler = document.querySelector('.sidebar-toggler')
+    this.addTaskForm = document.querySelector('.add-task-form')
+    this.addProjectForm = document.querySelector('.add-project-form')
+    this.addTaskBtn = document.querySelector('.add-task-btn')
+    this.projectItems = document.querySelectorAll('.project-item')
+    this.closeModalBtns = document.querySelectorAll('.close-modal')
+    this.myProjectsDiv = document.querySelector('.my-projects')
+    this.mainContentsContainer = document.querySelector(
+      '.main-contents .container'
+    )
+  }
 
-    sidebarToggler.addEventListener('click', () => this.toggleSidebar())
-    addTaskForm.addEventListener('submit', (event) =>
-      this.handleTaskFormSubmit(event)
+  static addEventListeners () {
+    this.sidebarToggler.addEventListener('click', () => this.toggleSidebar())
+    this.addTaskForm.addEventListener('submit', (event) =>
+      this.handleAddTaskFormSubmit(event)
     )
-    addProjectForm.addEventListener('submit', (event) =>
-      this.handleProjectFormSubmit(event)
+    this.addProjectForm.addEventListener('submit', (event) =>
+      this.handleAddProjectFormSubmit(event)
     )
-    addTaskBtn.addEventListener('click', () =>
+    this.addTaskBtn.addEventListener('click', () =>
       this.populateParentProjectSelect()
     )
-    projectItems.forEach((projectItem) => {
-      projectItem.addEventListener('click', () => {
-        this.handleProjectItemClick(projectItem)
-      })
-    })
-    closeModalBtns.forEach((closeModalBtn) => {
-      closeModalBtn.addEventListener('click', () => {
-        const form = closeModalBtn.closest('.modal').querySelector('form')
 
-        if (form) {
-          form.reset()
-          form.classList.remove('was-validated')
-        }
-      })
+    this.projectItems.forEach((projectItem) => {
+      projectItem.addEventListener('click', () =>
+        this.handleProjectItemClick(projectItem)
+      )
     })
+
+    this.closeModalBtns.forEach((closeModalBtn) => {
+      closeModalBtn.addEventListener('click', () =>
+        this.resetForm(closeModalBtn)
+      )
+    })
+  }
+
+  static resetForm (closeModalBtn) {
+    const form = closeModalBtn.closest('.modal').querySelector('form')
+    if (form) {
+      form.reset()
+      form.classList.remove('was-validated')
+    }
   }
 
   static toggleSidebar () {
@@ -52,105 +64,86 @@ export default class UI {
     mainContents.classList.toggle('full-width')
   }
 
-  static handleTaskFormSubmit (event) {
+  static handleAddTaskFormSubmit (event) {
     event.preventDefault()
-    const addTaskForm = document.querySelector('.add-task-form')
-
-    if (addTaskForm.checkValidity()) {
-      const name = addTaskForm.querySelector('#task-name').value
-      const description = addTaskForm.querySelector('#description').value
-      const dueDate = addTaskForm.querySelector('#due-date').value
-      const priority = addTaskForm.querySelector('#priority').value
-      const parentProjectId =
-        +addTaskForm.querySelector('#parent-project-id').value
-
-      const newTask = new Task(
-        name,
-        description,
-        dueDate,
-        priority,
-        parentProjectId
+    if (this.addTaskForm.checkValidity()) {
+      const newTask = this.createTaskFromForm(this.addTaskForm)
+      Storage.addTaskToProject(newTask, newTask.parentProjectId)
+      this.resetForm(
+        this.addTaskForm.closest('.modal').querySelector('.close-modal')
       )
-      Storage.addTaskToProject(newTask, parentProjectId)
-
-      addTaskForm.reset()
-      addTaskForm.classList.remove('was-validated')
-
-      const addTaskModal = addTaskForm.closest('.modal')
-      this.hideModal(addTaskModal)
-
-      this.loadTasks(parentProjectId)
+      this.hideModal(this.addTaskForm.closest('.modal'))
+      this.loadTasks(newTask.parentProjectId)
     } else {
       event.stopPropagation()
-      addTaskForm.classList.add('was-validated')
+      this.addTaskForm.classList.add('was-validated')
     }
   }
 
-  static hideModal (modal) {
-    bootstrap.Modal.getInstance(modal).hide()
-  }
-
-  static handleProjectFormSubmit (event) {
+  static handleAddProjectFormSubmit (event) {
     event.preventDefault()
-    const addProjectForm = document.querySelector('.add-project-form')
-
-    if (addProjectForm.checkValidity()) {
-      const name = addProjectForm.querySelector('#project-name').value
-      const newProject = new Project(name)
+    if (this.addProjectForm.checkValidity()) {
+      const newProject = new Project(
+        this.addProjectForm.querySelector('#project-name').value
+      )
       Storage.addProject(newProject)
-
-      addProjectForm.reset()
-      addProjectForm.classList.remove('was-validated')
-
-      const addProjectModal = addProjectForm.closest('.modal')
-      this.hideModal(addProjectModal)
-
+      this.resetForm(
+        this.addProjectForm.closest('.modal').querySelector('.close-modal')
+      )
+      this.hideModal(this.addProjectForm.closest('.modal'))
       this.loadMyProjects()
       document.getElementById(newProject.id).closest('.project-item').click()
     } else {
       event.stopPropagation()
-      addProjectForm.classList.add('was-validated')
+      this.addProjectForm.classList.add('was-validated')
     }
   }
 
   static loadMyProjects () {
-    const myProjectsDiv = document.querySelector('.my-projects')
-    myProjectsDiv.innerHTML = ''
+    this.myProjectsDiv.innerHTML = ''
     const projects = Storage.getProjects()
 
     projects.forEach((project) => {
-      if (![1, 2, 3, 4, 5].includes(project.id)) {
-        const projectItem = document.createElement('div')
-        projectItem.classList.add('project-item')
-
-        const iconElement = document.createElement('i')
-        iconElement.classList.add('bi', 'bi-collection', 'h5')
-
-        const paragraphElement = document.createElement('p')
-        paragraphElement.id = project.id
-        paragraphElement.textContent = project.name
-
-        const spanElement = document.createElement('span')
-        spanElement.classList.add('badge', 'text-bg-secondary', 'num-of-tasks')
-
-        projectItem.appendChild(iconElement)
-        projectItem.appendChild(paragraphElement)
-        projectItem.appendChild(spanElement)
-
-        projectItem.addEventListener('click', () => {
-          this.handleProjectItemClick(projectItem)
-        })
-
-        myProjectsDiv.appendChild(projectItem)
+      if (!['1', '2', '3', '4', '5'].includes(project.id)) {
+        this.createProjectItem(project)
       }
     })
   }
 
+  static createProjectItem (project) {
+    const projectItem = document.createElement('div')
+    projectItem.classList.add('project-item')
+
+    const iconElement = document.createElement('i')
+    iconElement.classList.add('bi', 'bi-collection', 'h5')
+
+    const paragraphElement = document.createElement('p')
+    paragraphElement.id = project.id
+    paragraphElement.textContent = project.name
+
+    const spanElement = document.createElement('span')
+    spanElement.classList.add(
+      'badge',
+      'text-bg-secondary',
+      'num-of-tasks',
+      'rounded-circle'
+    )
+
+    projectItem.appendChild(iconElement)
+    projectItem.appendChild(paragraphElement)
+    projectItem.appendChild(spanElement)
+
+    projectItem.addEventListener('click', () =>
+      this.handleProjectItemClick(projectItem)
+    )
+
+    this.myProjectsDiv.appendChild(projectItem)
+  }
+
   static handleProjectItemClick (projectItem) {
-    const projectItems = document.querySelectorAll('.project-item')
-    projectItems.forEach((pItem) => {
-      pItem.classList.remove('focus')
-    })
+    document
+      .querySelectorAll('.project-item')
+      .forEach((pItem) => pItem.classList.remove('focus'))
     projectItem.classList.add('focus')
 
     const projectId = this.getProjectId(projectItem)
@@ -158,85 +151,147 @@ export default class UI {
   }
 
   static getProjectId (projectItem) {
-    return +projectItem.querySelector('p').id
+    return projectItem.querySelector('p').id
   }
 
   static loadTasks (projectId) {
     const project = Storage.getProject(projectId)
-    const tasks = project.tasks
-    const mainContentsContainer = document.querySelector(
-      '.main-contents .container'
-    )
-    mainContentsContainer.innerHTML = ''
+    this.mainContentsContainer.innerHTML = ''
 
     const projectNameH2 = document.createElement('h2')
     projectNameH2.textContent = project.name
-    mainContentsContainer.appendChild(projectNameH2)
+    this.mainContentsContainer.appendChild(projectNameH2)
 
     const tasksUl = document.createElement('ul')
     tasksUl.classList.add('list-group', 'list-group-flush', 'my-3')
 
-    tasks.forEach((task) => {
-      const taskLi = document.createElement('li')
-      taskLi.classList.add('list-group-item', 'd-flex', 'task')
+    project.tasks.forEach((task) => this.createTaskItem(tasksUl, task))
 
-      const toggleStatusInput = document.createElement('input')
-      toggleStatusInput.type = 'checkbox'
-      toggleStatusInput.classList.add(
-        'form-check-input',
-        'me-3',
-        'toggle-status'
-      )
-      taskLi.appendChild(toggleStatusInput)
+    this.mainContentsContainer.appendChild(tasksUl)
 
-      const taskDetailsDiv = document.createElement('div')
-
-      const taskNameH6 = document.createElement('h6')
-      taskNameH6.textContent = task.name
-      taskDetailsDiv.appendChild(taskNameH6)
-
-      const taskDescriptionP = document.createElement('p')
-      taskDescriptionP.classList.add('description')
-      taskDescriptionP.textContent = task.description
-      taskDetailsDiv.appendChild(taskDescriptionP)
-
-      const dueDateAndPriorityDiv = document.createElement('div')
-      dueDateAndPriorityDiv.classList.add('d-flex', 'gap-2')
-
-      const dueDateP = document.createElement('p')
-      dueDateP.classList.add('due-date')
-      dueDateP.textContent = `Due Date: ${task.dueDate}`
-      dueDateAndPriorityDiv.appendChild(dueDateP)
-
-      const priorityP = document.createElement('p')
-      priorityP.classList.add('priority')
-      priorityP.textContent = `Priority: ${task.priority.toUpperCase()}`
-      const colorType =
-        task.priority === 'high'
-          ? 'bg-danger-subtle'
-          : task.priority === 'medium'
-            ? 'bg-warning-subtle'
-            : 'bg-success-subtle'
-      priorityP.classList.add(colorType)
-      dueDateAndPriorityDiv.appendChild(priorityP)
-
-      taskDetailsDiv.appendChild(dueDateAndPriorityDiv)
-      taskLi.appendChild(taskDetailsDiv)
-
-      tasksUl.appendChild(taskLi)
-    })
-
-    mainContentsContainer.appendChild(tasksUl)
-    if (![2, 3, 4, 5].includes(projectId)) {
+    if (!['2', '3', '4', '5'].includes(projectId)) {
       this.addAddTaskBtn()
     }
 
     this.addNumOfTasksBadges()
   }
 
+  static createTaskItem (tasksUl, task) {
+    const taskLi = document.createElement('li')
+    taskLi.classList.add('list-group-item', 'd-flex', 'task')
+
+    const toggleStatusInput = document.createElement('input')
+    toggleStatusInput.type = 'checkbox'
+    toggleStatusInput.classList.add(
+      'form-check-input',
+      'me-3',
+      'toggle-status',
+      'rounded-circle'
+    )
+    taskLi.appendChild(toggleStatusInput)
+
+    const taskDetailsDiv = document.createElement('div')
+    taskDetailsDiv.classList.add('task-details')
+    taskDetailsDiv.setAttribute('title', 'View/Update/Delete task')
+    taskDetailsDiv.addEventListener('click', () =>
+      this.handleTaskDetailsClick(task)
+    )
+
+    taskDetailsDiv.innerHTML = `
+      <h6>${task.name}</h6>
+      <p class="description">${task.description}</p>
+      <div class="d-flex gap-2">
+        <p class="due-date">Due Date: ${task.dueDate}</p>
+        <p class="priority ${this.getPriorityClass(
+          task.priority
+        )}">Priority: ${task.priority.toUpperCase()}</p>
+      </div>
+    `
+
+    taskLi.appendChild(taskDetailsDiv)
+    tasksUl.appendChild(taskLi)
+  }
+
+  static getPriorityClass (priority) {
+    return priority === 'high'
+      ? 'bg-danger-subtle'
+      : priority === 'medium'
+        ? 'bg-warning-subtle'
+        : 'bg-success-subtle'
+  }
+
+  static handleTaskDetailsClick (task) {
+    const updateTaskModal = document.querySelector('#update-task-modal')
+    let updateTaskForm = updateTaskModal.querySelector('form')
+
+    const newUpdateTaskForm = updateTaskForm.cloneNode(true)
+    updateTaskForm.parentNode.replaceChild(newUpdateTaskForm, updateTaskForm)
+    updateTaskForm = newUpdateTaskForm
+
+    this.populateParentProjectSelect(updateTaskForm)
+    this.populateForm(updateTaskForm, {
+      '#task-name': task.name,
+      '#description': task.description,
+      '#due-date': task.dueDate,
+      '#priority': task.priority,
+      '#parent-project-id': task.parentProjectId
+    })
+    this.showModal(updateTaskModal)
+
+    updateTaskForm.addEventListener('submit', (event) => {
+      this.handleUpdateTaskFormSubmit(event, task)
+    })
+  }
+
+  static populateForm (form, fieldValues) {
+    Object.entries(fieldValues).forEach(([selector, value]) => {
+      form.querySelector(selector).value = value
+    })
+  }
+
+  static handleUpdateTaskFormSubmit (event, task) {
+    event.preventDefault()
+    const updateTaskForm = document.querySelector('.update-task-form')
+
+    if (updateTaskForm.checkValidity()) {
+      const editedTask = this.createTaskFromForm(updateTaskForm, task.id)
+      Storage.updateTask(task.id, task.parentProjectId, editedTask)
+      this.resetForm(
+        updateTaskForm.closest('.modal').querySelector('.close-modal')
+      )
+      this.hideModal(updateTaskForm.closest('.modal'))
+      document
+        .getElementById(editedTask.parentProjectId)
+        .closest('.project-item')
+        .click()
+    } else {
+      event.stopPropagation()
+      updateTaskForm.classList.add('was-validated')
+    }
+  }
+
+  static createTaskFromForm (form, customId = null) {
+    return new Task(
+      form.querySelector('#task-name').value,
+      form.querySelector('#description').value,
+      form.querySelector('#due-date').value,
+      form.querySelector('#priority').value,
+      form.querySelector('#parent-project-id').value,
+      customId
+    )
+  }
+
+  static showModal (modal) {
+    const myModal = new bootstrap.Modal(modal)
+    myModal.show()
+  }
+
+  static hideModal (modal) {
+    bootstrap.Modal.getInstance(modal).hide()
+  }
+
   static addNumOfTasksBadges () {
-    const projectItems = document.querySelectorAll('.project-item')
-    projectItems.forEach((projectItem) => {
+    document.querySelectorAll('.project-item').forEach((projectItem) => {
       const projectId = this.getProjectId(projectItem)
       const project = Storage.getProject(projectId)
       const numOfTasks = project.tasks.length
@@ -246,9 +301,6 @@ export default class UI {
   }
 
   static addAddTaskBtn () {
-    const mainContentsContainer = document.querySelector(
-      '.main-contents .container'
-    )
     const addTaskBtn = document.createElement('div')
     addTaskBtn.classList.add(
       'd-flex',
@@ -278,19 +330,17 @@ export default class UI {
     addTaskBtn.addEventListener('click', () =>
       this.populateParentProjectSelect()
     )
-
-    mainContentsContainer.appendChild(addTaskBtn)
+    this.mainContentsContainer.appendChild(addTaskBtn)
   }
 
-  static populateParentProjectSelect () {
-    const parentProjectSelect = document.querySelector(
-      '.parent-project-select'
-    )
+  static populateParentProjectSelect (form = null) {
+    if (!form) form = this.addTaskForm
+    const parentProjectSelect = form.querySelector('.parent-project-select')
     const projects = Storage.getProjects()
     parentProjectSelect.innerHTML = ''
 
     projects
-      .filter((project) => ![2, 3, 4, 5].includes(project.id))
+      .filter((project) => !['2', '3', '4', '5'].includes(project.id))
       .forEach((project) => {
         const option = document.createElement('option')
         option.value = project.id.toString()
@@ -298,9 +348,7 @@ export default class UI {
           project.name.length > 30
             ? project.name.slice(0, 30) + '...'
             : project.name
-        if (project.id === 1) {
-          option.selected = true
-        }
+        if (project.id === '1') option.selected = true
         parentProjectSelect.appendChild(option)
       })
   }

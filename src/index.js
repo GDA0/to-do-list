@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Default projects
   const defaultProjects = [
-    { name: 'Inbox', id: 1 },
-    { name: 'Today', id: 2 },
-    { name: 'Tomorrow', id: 3 },
-    { name: 'This week', id: 4 },
-    { name: 'Completed', id: 5 }
+    { name: 'Inbox', id: '1' },
+    { name: 'Today', id: '2' },
+    { name: 'Tomorrow', id: '3' },
+    { name: 'This week', id: '4' },
+    { name: 'Completed', id: '5' }
   ]
 
   // Default tasks
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       description: 'Install Node.js, npm, and necessary development tools.',
       dueDate: '2024-07-05', // Today
       priority: 'high',
-      parentProjectId: 1
+      parentProjectId: '1'
     },
     {
       name: 'Create Initial Project Structure',
@@ -34,48 +34,48 @@ document.addEventListener('DOMContentLoaded', () => {
         'Set up the initial project structure with folders for components, services, and assets.',
       dueDate: '2024-07-06', // Tomorrow
       priority: 'medium',
-      parentProjectId: 1
+      parentProjectId: '1'
     },
     {
       name: 'Implement Authentication',
       description: 'Develop and integrate user authentication using JWT.',
       dueDate: '2024-07-06', // Saturday (assuming today is 2024-07-05)
       priority: 'high',
-      parentProjectId: 1
+      parentProjectId: '1'
     },
     {
       name: 'Design Database Schema',
       description: 'Create the database schema and set up initial tables.',
       dueDate: '2024-07-08', // Monday (assuming today is 2024-07-05)
       priority: 'medium',
-      parentProjectId: 1
+      parentProjectId: '1'
     },
     {
       name: 'Build REST API',
       description: 'Develop REST API endpoints for CRUD operations.',
       dueDate: '2024-07-10', // 10th July, 2024
       priority: 'high',
-      parentProjectId: 1
+      parentProjectId: '1'
     },
     {
       name: 'Set Up CI/CD Pipeline',
       description: 'Configure continuous integration and deployment pipeline.',
       dueDate: '2024-07-12', // Next week (assuming today is 2024-07-05)
       priority: 'medium',
-      parentProjectId: 1
+      parentProjectId: '1'
     },
     {
       name: 'Write Unit Tests',
       description: 'Write unit tests for the main components and services.',
       dueDate: '2024-08-05', // Next month (assuming today is 2024-07-05)
       priority: 'low',
-      parentProjectId: 1
+      parentProjectId: '1'
     }
   ]
 
   defaultProjects.forEach((defaultProject) => {
     const newProject = new Project(defaultProject.name, defaultProject.id)
-    if (newProject.id === 1) {
+    if (newProject.id === '1') {
       defaultTasks.forEach((defaultTask) => {
         const newTask = new Task(
           defaultTask.name,

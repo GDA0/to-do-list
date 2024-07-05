@@ -104,7 +104,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="update-task-modal-title">
-              Update/Delete task
+              View/Update/Delete task
             </h1>
             <button
               type="button"
@@ -128,13 +128,12 @@
                 <div class="invalid-feedback">Please enter task name</div>
               </div>
               <div class="form-floating mb-3">
-                <input
-                  type="text"
+                <textarea
                   class="form-control"
                   id="description"
                   placeholder="You'll need to apply self-discipline and excellence to be able to get it done"
-                  required
-                />
+                  style="height: max-content;"
+                ></textarea>
                 <label for="description">Description</label>
                 <div class="valid-feedback">Looks good!</div>
                 <div class="invalid-feedback">Please enter description</div>
