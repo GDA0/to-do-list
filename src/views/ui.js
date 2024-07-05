@@ -6,6 +6,7 @@ import * as bootstrap from 'bootstrap'
 export default class UI {
   static initialize () {
     this.addEventListeners()
+    this.loadMyProjects()
   }
 
   static addEventListeners () {
@@ -13,7 +14,7 @@ export default class UI {
     const addTaskForm = document.querySelector('.add-task-form')
     const addProjectForm = document.querySelector('.add-project-form')
     const addTaskBtn = document.querySelector('.add-task-btn')
-    const projectBtns = document.querySelectorAll('.project-btn')
+    const projectItems = document.querySelectorAll('.project-item')
     const closeModalBtns = document.querySelectorAll('.close-modal')
 
     sidebarToggler.addEventListener('click', () => this.toggleSidebar())
@@ -26,9 +27,9 @@ export default class UI {
     addTaskBtn.addEventListener('click', () =>
       this.populateParentProjectSelect()
     )
-    projectBtns.forEach((projectBtn) => {
-      projectBtn.addEventListener('click', () => {
-        this.handleProjectBtnClick(projectBtn)
+    projectItems.forEach((projectItem) => {
+      projectItem.addEventListener('click', () => {
+        this.handleProjectItemClick(projectItem)
       })
     })
     closeModalBtns.forEach((closeModalBtn) => {
@@ -118,8 +119,8 @@ export default class UI {
 
     projects.forEach((project) => {
       if (![1, 2, 3, 4, 5].includes(project.id)) {
-        const projectItemDiv = document.createElement('div')
-        projectItemDiv.classList.add('project-item', 'project-btn')
+        const projectItem = document.createElement('div')
+        projectItem.classList.add('project-item', 'project-btn')
 
         const iconElement = document.createElement('i')
         iconElement.classList.add('bi', 'bi-collection', 'h5')
@@ -128,29 +129,31 @@ export default class UI {
         paragraphElement.id = project.id
         paragraphElement.textContent = project.name
 
-        projectItemDiv.appendChild(iconElement)
-        projectItemDiv.appendChild(paragraphElement)
+        projectItem.appendChild(iconElement)
+        projectItem.appendChild(paragraphElement)
 
-        myProjectsDiv.appendChild(projectItemDiv)
+        projectItem.addEventListener('click', () => {
+          this.handleProjectItemClick(projectItem)
+        })
+
+        myProjectsDiv.appendChild(projectItem)
       }
     })
-
-    this.initialize()
   }
 
-  static handleProjectBtnClick (projectBtn) {
-    const projectBtns = document.querySelectorAll('.project-btn')
-    projectBtns.forEach((pBtn) => {
-      pBtn.classList.remove('focus')
+  static handleProjectItemClick (projectItem) {
+    const projectItems = document.querySelectorAll('.project-item')
+    projectItems.forEach((pItem) => {
+      pItem.classList.remove('focus')
     })
-    projectBtn.classList.add('focus')
+    projectItem.classList.add('focus')
 
-    const projectId = this.getProjectId(projectBtn)
+    const projectId = this.getProjectId(projectItem)
     this.loadTasks(projectId)
   }
 
-  static getProjectId (projectBtn) {
-    return +projectBtn.querySelector('p').id
+  static getProjectId (projectItem) {
+    return +projectItem.querySelector('p').id
   }
 
   static loadTasks (projectId) {
@@ -220,16 +223,16 @@ export default class UI {
 
     mainContentsContainer.appendChild(tasksUl)
     if (![2, 3, 4, 5].includes(projectId)) {
-      this.addAddTaskBtnDiv()
+      this.addAddTaskBtn()
     }
   }
 
-  static addAddTaskBtnDiv () {
+  static addAddTaskBtn () {
     const mainContentsContainer = document.querySelector(
       '.main-contents .container'
     )
-    const addTaskBtnDiv = document.createElement('div')
-    addTaskBtnDiv.classList.add(
+    const addTaskBtn = document.createElement('div')
+    addTaskBtn.classList.add(
       'd-flex',
       'align-items-center',
       'py-1',
@@ -242,19 +245,23 @@ export default class UI {
       'active-style',
       'add-task-btn'
     )
-    addTaskBtnDiv.setAttribute('data-bs-toggle', 'modal')
-    addTaskBtnDiv.setAttribute('data-bs-target', '#add-task-modal')
-    addTaskBtnDiv.style.maxWidth = 'max-content'
+    addTaskBtn.setAttribute('data-bs-toggle', 'modal')
+    addTaskBtn.setAttribute('data-bs-target', '#add-task-modal')
+    addTaskBtn.style.maxWidth = 'max-content'
 
     const iconElement = document.createElement('i')
     iconElement.classList.add('bi', 'bi-plus-circle-fill', 'h5')
-    addTaskBtnDiv.appendChild(iconElement)
+    addTaskBtn.appendChild(iconElement)
 
     const pElement = document.createElement('p')
     pElement.textContent = 'Add task'
-    addTaskBtnDiv.appendChild(pElement)
+    addTaskBtn.appendChild(pElement)
 
-    mainContentsContainer.appendChild(addTaskBtnDiv)
+    addTaskBtn.addEventListener('click', () =>
+      this.populateParentProjectSelect()
+    )
+
+    mainContentsContainer.appendChild(addTaskBtn)
   }
 
   static populateParentProjectSelect () {
