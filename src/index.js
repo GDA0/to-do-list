@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       name: 'Set Up Development Environment',
       description: 'Install Node.js, npm, and necessary development tools.',
-      dueDate: 'Today',
+      dueDate: '2024-07-05', // Today
       priority: 'high',
       parentProjectId: 1
     },
@@ -32,42 +32,42 @@ document.addEventListener('DOMContentLoaded', () => {
       name: 'Create Initial Project Structure',
       description:
         'Set up the initial project structure with folders for components, services, and assets.',
-      dueDate: 'Tomorrow',
+      dueDate: '2024-07-06', // Tomorrow
       priority: 'medium',
       parentProjectId: 1
     },
     {
       name: 'Implement Authentication',
       description: 'Develop and integrate user authentication using JWT.',
-      dueDate: 'Saturday',
+      dueDate: '2024-07-06', // Saturday (assuming today is 2024-07-05)
       priority: 'high',
       parentProjectId: 1
     },
     {
       name: 'Design Database Schema',
       description: 'Create the database schema and set up initial tables.',
-      dueDate: 'Monday',
+      dueDate: '2024-07-08', // Monday (assuming today is 2024-07-05)
       priority: 'medium',
       parentProjectId: 1
     },
     {
       name: 'Build REST API',
       description: 'Develop REST API endpoints for CRUD operations.',
-      dueDate: '10th July, 2024',
+      dueDate: '2024-07-10', // 10th July, 2024
       priority: 'high',
       parentProjectId: 1
     },
     {
       name: 'Set Up CI/CD Pipeline',
       description: 'Configure continuous integration and deployment pipeline.',
-      dueDate: 'Next week',
+      dueDate: '2024-07-12', // Next week (assuming today is 2024-07-05)
       priority: 'medium',
       parentProjectId: 1
     },
     {
       name: 'Write Unit Tests',
       description: 'Write unit tests for the main components and services.',
-      dueDate: 'Next month',
+      dueDate: '2024-08-05', // Next month (assuming today is 2024-07-05)
       priority: 'low',
       parentProjectId: 1
     }
@@ -93,6 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   UI.initialize()
 
-  // Click first project btn which is Inbox
+  // Click first project item which is Inbox
   document.querySelector('.project-item').click()
 })
