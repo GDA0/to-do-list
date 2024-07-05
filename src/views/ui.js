@@ -110,7 +110,7 @@ export default class UI {
     const projects = Storage.getProjects()
 
     projects.forEach((project) => {
-      if (!['1', '2', '3', '4', '5'].includes(project.id)) {
+      if (!['1', '2', '3', '4', '5', '6'].includes(project.id)) {
         this.createProjectItem(project)
       }
     })
@@ -175,7 +175,7 @@ export default class UI {
 
     this.mainContentsContainer.appendChild(tasksUl)
 
-    if (!['2', '3', '4', '5'].includes(projectId)) {
+    if (!['2', '3', '4', '5', '6'].includes(projectId)) {
       this.addAddTaskBtn()
     }
 
@@ -360,7 +360,7 @@ export default class UI {
     parentProjectSelect.innerHTML = ''
 
     projects
-      .filter((project) => !['2', '3', '4', '5'].includes(project.id))
+      .filter((project) => !['2', '3', '4', '5', '6'].includes(project.id))
       .forEach((project) => {
         const option = document.createElement('option')
         option.value = project.id.toString()
