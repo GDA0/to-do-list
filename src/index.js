@@ -8,7 +8,7 @@ import Project from './models/project'
 import Task from './models/task'
 
 document.addEventListener('DOMContentLoaded', () => {
-  UI.initialize()
+  // Add default projects and tasks
 
   // Default projects
   const defaultProjects = [
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
     Storage.addProject(newProject)
   })
 
+  UI.loadMyProjects()
+
   // Click first project btn which is Inbox
   document.querySelector('.project-btn').click()
-
-  UI.loadMyProjects()
 })

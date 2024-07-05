@@ -5,32 +5,27 @@ import * as bootstrap from 'bootstrap'
 
 export default class UI {
   static initialize () {
-    this.sidebar = document.querySelector('.sidebar')
-    this.sidebarToggler = document.querySelector('.sidebar-toggler')
-    this.mainContents = document.querySelector('.main-contents')
-    this.addTaskForm = document.querySelector('.add-task-form')
-    this.addProjectForm = document.querySelector('.add-project-form')
-    this.addTaskBtn = document.querySelector('.add-task-btn')
-    this.parentProjectSelect = document.querySelector('.parent-project-select')
-    this.projectBtns = document.querySelectorAll('.project-btn')
-    this.mainContentsContainer = this.mainContents.querySelector('.container')
-    this.myProjectsDiv = document.querySelector('.my-projects')
-
     this.addEventListeners()
   }
 
   static addEventListeners () {
-    this.sidebarToggler.addEventListener('click', () => this.toggleSidebar())
-    this.addTaskForm.addEventListener('submit', (event) =>
+    const sidebarToggler = document.querySelector('.sidebar-toggler')
+    const addTaskForm = document.querySelector('.add-task-form')
+    const addProjectForm = document.querySelector('.add-project-form')
+    const addTaskBtn = document.querySelector('.add-task-btn')
+    const projectBtns = document.querySelectorAll('.project-btn')
+
+    sidebarToggler.addEventListener('click', () => this.toggleSidebar())
+    addTaskForm.addEventListener('submit', (event) =>
       this.handleTaskFormSubmit(event)
     )
-    this.addProjectForm.addEventListener('submit', (event) =>
+    addProjectForm.addEventListener('submit', (event) =>
       this.handleProjectFormSubmit(event)
     )
-    this.addTaskBtn.addEventListener('click', () =>
+    addTaskBtn.addEventListener('click', () =>
       this.populateParentProjectSelect()
     )
-    this.projectBtns.forEach((projectBtn) => {
+    projectBtns.forEach((projectBtn) => {
       projectBtn.addEventListener('click', () => {
         this.handleProjectBtnClick(projectBtn)
       })
@@ -38,20 +33,23 @@ export default class UI {
   }
 
   static toggleSidebar () {
-    this.sidebar.classList.toggle('sidebar-hide')
-    this.mainContents.classList.toggle('full-width')
+    const sidebar = document.querySelector('.sidebar')
+    const mainContents = document.querySelector('.main-contents')
+    sidebar.classList.toggle('sidebar-hide')
+    mainContents.classList.toggle('full-width')
   }
 
   static handleTaskFormSubmit (event) {
     event.preventDefault()
+    const addTaskForm = document.querySelector('.add-task-form')
 
-    if (this.addTaskForm.checkValidity()) {
-      const name = this.addTaskForm.querySelector('#name').value
-      const description = this.addTaskForm.querySelector('#description').value
-      const dueDate = this.addTaskForm.querySelector('#due-date').value
-      const priority = this.addTaskForm.querySelector('#priority').value
+    if (addTaskForm.checkValidity()) {
+      const name = addTaskForm.querySelector('#name').value
+      const description = addTaskForm.querySelector('#description').value
+      const dueDate = addTaskForm.querySelector('#due-date').value
+      const priority = addTaskForm.querySelector('#priority').value
       const parentProjectId =
-        +this.addTaskForm.querySelector('#parent-project-id').value
+        +addTaskForm.querySelector('#parent-project-id').value
 
       const newTask = new Task(
         name,
@@ -62,16 +60,16 @@ export default class UI {
       )
       Storage.addTaskToProject(newTask, parentProjectId)
 
-      this.addTaskForm.reset()
-      this.addTaskForm.classList.remove('was-validated')
+      addTaskForm.reset()
+      addTaskForm.classList.remove('was-validated')
 
-      const addTaskModal = this.addTaskForm.closest('.modal')
+      const addTaskModal = addTaskForm.closest('.modal')
       this.hideModal(addTaskModal)
 
       this.loadTasks(parentProjectId)
     } else {
       event.stopPropagation()
-      this.addTaskForm.classList.add('was-validated')
+      addTaskForm.classList.add('was-validated')
     }
   }
 
@@ -81,27 +79,29 @@ export default class UI {
 
   static handleProjectFormSubmit (event) {
     event.preventDefault()
+    const addProjectForm = document.querySelector('.add-project-form')
 
-    if (this.addProjectForm.checkValidity()) {
-      const name = this.addProjectForm.querySelector('#name').value
+    if (addProjectForm.checkValidity()) {
+      const name = addProjectForm.querySelector('#name').value
       const newProject = new Project(name)
       Storage.addProject(newProject)
 
-      this.addProjectForm.reset()
-      this.addProjectForm.classList.remove('was-validated')
+      addProjectForm.reset()
+      addProjectForm.classList.remove('was-validated')
 
-      const addProjectModal = this.addProjectForm.closest('.modal')
+      const addProjectModal = addProjectForm.closest('.modal')
       this.hideModal(addProjectModal)
 
       this.loadMyProjects()
     } else {
       event.stopPropagation()
-      this.addProjectForm.classList.add('was-validated')
+      addProjectForm.classList.add('was-validated')
     }
   }
 
   static loadMyProjects () {
-    this.myProjectsDiv.innerHTML = ''
+    const myProjectsDiv = document.querySelector('.my-projects')
+    myProjectsDiv.innerHTML = ''
     const projects = Storage.getProjects()
 
     projects.forEach((project) => {
@@ -119,7 +119,7 @@ export default class UI {
         projectItemDiv.appendChild(iconElement)
         projectItemDiv.appendChild(paragraphElement)
 
-        this.myProjectsDiv.appendChild(projectItemDiv)
+        myProjectsDiv.appendChild(projectItemDiv)
       }
     })
 
@@ -127,7 +127,8 @@ export default class UI {
   }
 
   static handleProjectBtnClick (projectBtn) {
-    this.projectBtns.forEach((pBtn) => {
+    const projectBtns = document.querySelectorAll('.project-btn')
+    projectBtns.forEach((pBtn) => {
       pBtn.classList.remove('focus')
     })
     projectBtn.classList.add('focus')
@@ -143,11 +144,14 @@ export default class UI {
   static loadTasks (projectId) {
     const project = Storage.getProject(projectId)
     const tasks = project.tasks
-    this.mainContentsContainer.innerHTML = ''
+    const mainContentsContainer = document.querySelector(
+      '.main-contents .container'
+    )
+    mainContentsContainer.innerHTML = ''
 
     const projectNameH2 = document.createElement('h2')
     projectNameH2.textContent = project.name
-    this.mainContentsContainer.appendChild(projectNameH2)
+    mainContentsContainer.appendChild(projectNameH2)
 
     const tasksUl = document.createElement('ul')
     tasksUl.classList.add('list-group', 'list-group-flush', 'my-3')
@@ -202,13 +206,16 @@ export default class UI {
       tasksUl.appendChild(taskLi)
     })
 
-    this.mainContentsContainer.appendChild(tasksUl)
+    mainContentsContainer.appendChild(tasksUl)
     if (![2, 3, 4, 5].includes(projectId)) {
       this.addAddTaskBtnDiv()
     }
   }
 
   static addAddTaskBtnDiv () {
+    const mainContentsContainer = document.querySelector(
+      '.main-contents .container'
+    )
     const addTaskBtnDiv = document.createElement('div')
     addTaskBtnDiv.classList.add(
       'd-flex',
@@ -235,12 +242,15 @@ export default class UI {
     pElement.textContent = 'Add task'
     addTaskBtnDiv.appendChild(pElement)
 
-    this.mainContentsContainer.appendChild(addTaskBtnDiv)
+    mainContentsContainer.appendChild(addTaskBtnDiv)
   }
 
   static populateParentProjectSelect () {
+    const parentProjectSelect = document.querySelector(
+      '.parent-project-select'
+    )
     const projects = Storage.getProjects()
-    this.parentProjectSelect.innerHTML = ''
+    parentProjectSelect.innerHTML = ''
 
     projects
       .filter((project) => ![2, 3, 4, 5].includes(project.id))
@@ -254,7 +264,7 @@ export default class UI {
         if (project.id === 1) {
           option.selected = true
         }
-        this.parentProjectSelect.appendChild(option)
+        parentProjectSelect.appendChild(option)
       })
   }
 }
