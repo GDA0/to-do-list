@@ -44,7 +44,7 @@ export default class UI {
     const addTaskForm = document.querySelector('.add-task-form')
 
     if (addTaskForm.checkValidity()) {
-      const name = addTaskForm.querySelector('#name').value
+      const name = addTaskForm.querySelector('#task-name').value
       const description = addTaskForm.querySelector('#description').value
       const dueDate = addTaskForm.querySelector('#due-date').value
       const priority = addTaskForm.querySelector('#priority').value
@@ -82,7 +82,7 @@ export default class UI {
     const addProjectForm = document.querySelector('.add-project-form')
 
     if (addProjectForm.checkValidity()) {
-      const name = addProjectForm.querySelector('#name').value
+      const name = addProjectForm.querySelector('#project-name').value
       const newProject = new Project(name)
       Storage.addProject(newProject)
 
