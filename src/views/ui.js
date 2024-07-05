@@ -105,7 +105,7 @@ export default class UI {
       this.hideModal(addProjectModal)
 
       this.loadMyProjects()
-      document.getElementById(newProject.id).closest('.project-btn').click()
+      document.getElementById(newProject.id).closest('.project-item').click()
     } else {
       event.stopPropagation()
       addProjectForm.classList.add('was-validated')
@@ -120,7 +120,7 @@ export default class UI {
     projects.forEach((project) => {
       if (![1, 2, 3, 4, 5].includes(project.id)) {
         const projectItem = document.createElement('div')
-        projectItem.classList.add('project-item', 'project-btn')
+        projectItem.classList.add('project-item')
 
         const iconElement = document.createElement('i')
         iconElement.classList.add('bi', 'bi-collection', 'h5')

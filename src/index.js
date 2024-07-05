@@ -94,5 +94,5 @@ document.addEventListener('DOMContentLoaded', () => {
   UI.initialize()
 
   // Click first project btn which is Inbox
-  document.querySelector('.project-btn').click()
+  document.querySelector('.project-item').click()
 })
