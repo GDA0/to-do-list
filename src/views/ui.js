@@ -7,6 +7,7 @@ export default class UI {
   static initialize () {
     this.addEventListeners()
     this.loadMyProjects()
+    this.addNumOfTasksBadges()
   }
 
   static addEventListeners () {
@@ -129,8 +130,12 @@ export default class UI {
         paragraphElement.id = project.id
         paragraphElement.textContent = project.name
 
+        const spanElement = document.createElement('span')
+        spanElement.classList.add('badge', 'text-bg-secondary', 'num-of-tasks')
+
         projectItem.appendChild(iconElement)
         projectItem.appendChild(paragraphElement)
+        projectItem.appendChild(spanElement)
 
         projectItem.addEventListener('click', () => {
           this.handleProjectItemClick(projectItem)
@@ -225,6 +230,19 @@ export default class UI {
     if (![2, 3, 4, 5].includes(projectId)) {
       this.addAddTaskBtn()
     }
+
+    this.addNumOfTasksBadges()
+  }
+
+  static addNumOfTasksBadges () {
+    const projectItems = document.querySelectorAll('.project-item')
+    projectItems.forEach((projectItem) => {
+      const projectId = this.getProjectId(projectItem)
+      const project = Storage.getProject(projectId)
+      const numOfTasks = project.tasks.length
+      projectItem.querySelector('.num-of-tasks').textContent =
+        numOfTasks > 0 ? numOfTasks : ''
+    })
   }
 
   static addAddTaskBtn () {

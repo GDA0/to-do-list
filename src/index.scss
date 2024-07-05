@@ -57,8 +57,23 @@ p {
   margin-bottom: 2px;
   padding: 4px 8px;
   border-radius: 4px;
-  gap: 8px;
-  @include hover-effect; // Reuse hover mixin
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  will-change: contents;
+
+  @include hover-effect;
+
+  i {
+    margin-right: 8px;
+  }
+
+  .num-of-tasks {
+    margin-left: auto;
+    font-size: 0.6rem;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // Sidebar styles
@@ -75,15 +90,6 @@ p {
 .sidebar-toggler {
   right: 4px;
   transition: transform 0.3s ease;
-  will-change: contents;
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.project-item {
-  transition: transform 0.3s ease, background-color 0.3s ease;
   will-change: contents;
 
   &:active {
