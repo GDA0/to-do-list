@@ -14,6 +14,7 @@ export default class UI {
     const addProjectForm = document.querySelector('.add-project-form')
     const addTaskBtn = document.querySelector('.add-task-btn')
     const projectBtns = document.querySelectorAll('.project-btn')
+    const closeModalBtns = document.querySelectorAll('.close-modal')
 
     sidebarToggler.addEventListener('click', () => this.toggleSidebar())
     addTaskForm.addEventListener('submit', (event) =>
@@ -28,6 +29,16 @@ export default class UI {
     projectBtns.forEach((projectBtn) => {
       projectBtn.addEventListener('click', () => {
         this.handleProjectBtnClick(projectBtn)
+      })
+    })
+    closeModalBtns.forEach((closeModalBtn) => {
+      closeModalBtn.addEventListener('click', () => {
+        const form = closeModalBtn.closest('.modal').querySelector('form')
+
+        if (form) {
+          form.reset()
+          form.classList.remove('was-validated')
+        }
       })
     })
   }
