@@ -2,6 +2,12 @@ import Storage from '../utils/storage'
 import Task from '../models/task'
 import Project from '../models/project'
 import * as bootstrap from 'bootstrap'
+import {
+  isToday,
+  isTomorrow,
+  isYesterday,
+  formatDistanceToNow
+} from 'date-fns'
 
 export default class UI {
   static initialize () {
@@ -201,7 +207,7 @@ export default class UI {
       <h6>${task.name}</h6>
       <p class="description">${task.description}</p>
       <div class="d-flex gap-2">
-        <p class="due-date">Due Date: ${task.dueDate}</p>
+        <p class="due-date">Due Date: ${this.formatDueDate(task.dueDate)}</p>
         <p class="priority ${this.getPriorityClass(
           task.priority
         )}">Priority: ${task.priority.toUpperCase()}</p>
@@ -210,6 +216,20 @@ export default class UI {
 
     taskLi.appendChild(taskDetailsDiv)
     tasksUl.appendChild(taskLi)
+  }
+
+  static formatDueDate (dueDate) {
+    const date = new Date(dueDate)
+
+    if (isToday(date)) {
+      return 'Today'
+    } else if (isTomorrow(date)) {
+      return 'Tomorrow'
+    } else if (isYesterday(date)) {
+      return 'Yesterday'
+    } else {
+      return formatDistanceToNow(date, { addSuffix: true })
+    }
   }
 
   static getPriorityClass (priority) {
