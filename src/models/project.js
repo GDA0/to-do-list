@@ -1,12 +1,26 @@
+import { v4 as uuidv4 } from 'uuid'
+import Task from './task'
+
 export default class Project {
-  constructor (name, customId = null) {
+  constructor (name, id = uuidv4()) {
     this.name = name
     this.tasks = []
-    this.id = customId || Date.now()
+    this.id = id
   }
 
   addTask (task) {
     this.tasks.push(task)
+  }
+
+  editTask (taskId, updatedTask) {
+    const taskIndex = this.tasks.findIndex((task) => task.id === taskId)
+    if (taskIndex !== -1) {
+      Object.assign(this.tasks[taskIndex], updatedTask)
+    }
+  }
+
+  removeTask (taskId) {
+    this.tasks = this.tasks.filter((task) => task.id !== taskId)
   }
 
   toggleTaskStatus (taskId) {
@@ -16,18 +30,13 @@ export default class Project {
     }
   }
 
-  editTask (taskId, editedTask) {
-    const task = this.tasks.find((task) => task.id === taskId)
-    if (task) {
-      task.editTask(editedTask)
-    }
+  editProjectName (newName) {
+    this.name = newName
   }
 
-  editProjectName (editedProjectName) {
-    this.name = editedProjectName
-  }
-
-  removeTask (taskId) {
-    this.tasks = this.tasks.filter((task) => task.id !== taskId)
+  static fromJSON (json) {
+    const project = new Project(json.name, json.id)
+    project.tasks = json.tasks.map((taskData) => Task.fromJSON(taskData))
+    return project
   }
 }
