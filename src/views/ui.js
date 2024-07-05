@@ -104,6 +104,7 @@ export default class UI {
       this.hideModal(addProjectModal)
 
       this.loadMyProjects()
+      document.getElementById(newProject.id).closest('.project-btn').click()
     } else {
       event.stopPropagation()
       addProjectForm.classList.add('was-validated')
