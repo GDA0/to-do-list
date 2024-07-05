@@ -1,4 +1,3 @@
-// Import our custom CSS
 import './index.scss'
 import * as bootstrap from 'bootstrap'
 import { subYears, addDays, addMonths, addYears, format } from 'date-fns'
@@ -15,7 +14,7 @@ const generateDefaultTasks = () => {
     {
       name: 'Set Up Development Environment',
       description: 'Install Node.js, npm, and necessary development tools.',
-      dueDate: format(subYears(today, 2024), 'yyyy-MM-dd'), // 2024 years ago
+      dueDate: format(subYears(today, new Date().getFullYear()), 'yyyy-MM-dd'), // Current year years ago
       priority: 'high',
       parentProjectId: '1'
     },

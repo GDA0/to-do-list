@@ -2,6 +2,7 @@ import Storage from '../utils/storage'
 import Task from '../models/task'
 import Project from '../models/project'
 import * as bootstrap from 'bootstrap'
+import { v4 as uuidv4 } from 'uuid'
 import {
   isToday,
   isTomorrow,
@@ -28,6 +29,7 @@ export default class UI {
     this.mainContentsContainer = document.querySelector(
       '.main-contents .container'
     )
+    this.deleteTaskBtn = document.querySelector('.delete-task')
   }
 
   static addEventListeners () {
@@ -53,6 +55,12 @@ export default class UI {
         this.resetForm(closeModalBtn)
       )
     })
+    this.deleteTaskBtn.addEventListener('click', () =>
+      this.handleTaskDelete(
+        this.deleteTaskBtn.id,
+        this.deleteTaskBtn.parentProjectId
+      )
+    )
   }
 
   static resetForm (closeModalBtn) {
@@ -103,6 +111,24 @@ export default class UI {
       event.stopPropagation()
       this.addProjectForm.classList.add('was-validated')
     }
+  }
+
+  static handleTaskDelete (taskId, parentProjectId) {
+    this.showModal(document.getElementById('confirmationModal'))
+    this.hideModal(document.getElementById('update-task-modal'))
+
+    let confirmDeleteButton = document.getElementById('confirmDeleteButton')
+
+    // Remove any previously attached event listeners to avoid multiple handlers
+    confirmDeleteButton.replaceWith(confirmDeleteButton.cloneNode(true))
+    confirmDeleteButton = document.getElementById('confirmDeleteButton')
+
+    confirmDeleteButton.addEventListener('click', () => {
+      Storage.removeTaskFromProject(taskId, parentProjectId)
+      this.hideModal(document.querySelector('#update-task-modal'))
+      this.loadTasks(parentProjectId)
+      this.hideModal(document.getElementById('confirmationModal'))
+    })
   }
 
   static loadMyProjects () {
@@ -244,6 +270,7 @@ export default class UI {
     const updateTaskModal = document.querySelector('#update-task-modal')
     let updateTaskForm = updateTaskModal.querySelector('form')
 
+    // Remove any previously attached event listeners to avoid multiple handlers
     const newUpdateTaskForm = updateTaskForm.cloneNode(true)
     updateTaskForm.parentNode.replaceChild(newUpdateTaskForm, updateTaskForm)
     updateTaskForm = newUpdateTaskForm
@@ -256,6 +283,9 @@ export default class UI {
       '#priority': task.priority,
       '#parent-project-id': task.parentProjectId
     })
+    // For easy identification and deletion
+    this.deleteTaskBtn.id = task.id
+    this.deleteTaskBtn.parentProjectId = task.parentProjectId
     this.showModal(updateTaskModal)
 
     updateTaskForm.addEventListener('submit', (event) => {
@@ -290,7 +320,7 @@ export default class UI {
     }
   }
 
-  static createTaskFromForm (form, customId = null) {
+  static createTaskFromForm (form, customId = uuidv4()) {
     return new Task(
       form.querySelector('#task-name').value,
       form.querySelector('#description').value,
