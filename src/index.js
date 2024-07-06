@@ -102,3 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   UI.initialize()
 })
+
+const toggleSidebar = () => {
+  const screenWidth = window.innerWidth
+
+  if (screenWidth <= 768) {
+    UI.toggleSidebar()
+  }
+}
+
+// Call toggleSidebar on page load
+window.addEventListener('load', toggleSidebar)
