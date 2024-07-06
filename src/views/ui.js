@@ -197,7 +197,20 @@ export default class UI {
     const tasksUl = document.createElement('ul')
     tasksUl.classList.add('list-group', 'list-group-flush', 'my-3')
 
-    project.tasks.forEach((task) => this.createTaskItem(tasksUl, task))
+    const incompleteTasks = []
+    const completedTasks = []
+
+    project.tasks.forEach((task) => {
+      if (task.completed) {
+        completedTasks.push(task)
+      } else {
+        incompleteTasks.push(task)
+      }
+    })
+
+    // Append incomplete tasks first, then completed tasks
+    incompleteTasks.forEach((task) => this.createTaskItem(tasksUl, task))
+    completedTasks.forEach((task) => this.createTaskItem(tasksUl, task))
 
     this.mainContentsContainer.appendChild(tasksUl)
 
@@ -218,12 +231,29 @@ export default class UI {
       'form-check-input',
       'me-3',
       'toggle-status',
-      'rounded-circle'
+      'rounded-circle',
+      'fs-5'
     )
+    toggleStatusInput.setAttribute('data-task-id', `${task.id}`)
+    toggleStatusInput.setAttribute(
+      'data-project-id',
+      `${task.parentProjectId}`
+    )
+    toggleStatusInput.checked = task.completed
+
+    toggleStatusInput.addEventListener('change', (event) => {
+      const taskId = event.target.dataset.taskId
+      const projectId = event.target.dataset.projectId
+      console.log(event.target.dataset)
+      this.handleToggleTaskStatus(taskId, projectId)
+    })
     taskLi.appendChild(toggleStatusInput)
 
     const taskDetailsDiv = document.createElement('div')
     taskDetailsDiv.classList.add('task-details')
+    if (task.completed) {
+      taskDetailsDiv.classList.add('completed')
+    }
     taskDetailsDiv.setAttribute('title', 'View/Update/Delete task')
     taskDetailsDiv.addEventListener('click', () =>
       this.handleTaskDetailsClick(task)
@@ -233,7 +263,9 @@ export default class UI {
       <h6>${task.name}</h6>
       <p class="description">${task.description}</p>
       <div class="d-flex gap-2">
-        <p class="due-date">Due Date: ${this.formatDueDate(task.dueDate)}</p>
+        <p class="due-date bg-primary-subtle">Due Date: ${this.formatDueDate(
+          task.dueDate
+        )}</p>
         <p class="priority ${this.getPriorityClass(
           task.priority
         )}">Priority: ${task.priority.toUpperCase()}</p>
@@ -242,6 +274,11 @@ export default class UI {
 
     taskLi.appendChild(taskDetailsDiv)
     tasksUl.appendChild(taskLi)
+  }
+
+  static handleToggleTaskStatus (taskId, projectId) {
+    Storage.toggleTaskStatus(taskId, projectId)
+    this.loadTasks(projectId)
   }
 
   static formatDueDate (dueDate) {

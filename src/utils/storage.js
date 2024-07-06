@@ -73,4 +73,12 @@ export default class Storage {
       this.updateProject(project)
     }
   }
+
+  static toggleTaskStatus (taskId, projectId) {
+    const project = this.getProject(projectId)
+    if (project) {
+      project.toggleTaskStatus(taskId)
+      this.updateProject(project)
+    }
+  }
 }

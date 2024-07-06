@@ -22,10 +22,6 @@ export default class Task {
     this.completed = !this.completed
   }
 
-  update (updatedTask) {
-    Object.assign(this, updatedTask)
-  }
-
   static fromJSON (json) {
     const task = new Task(
       json.name,
