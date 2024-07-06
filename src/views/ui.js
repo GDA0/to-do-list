@@ -7,8 +7,23 @@ import {
   isToday,
   isTomorrow,
   isYesterday,
-  formatDistanceToNow
+  isPast,
+  isWithinInterval,
+  formatDistanceToNow,
+  parseISO,
+  startOfDay,
+  startOfWeek,
+  endOfWeek
 } from 'date-fns'
+
+// Define project IDs for special cases
+const SPECIAL_PROJECT_IDS = {
+  TODAY: '2',
+  TOMORROW: '3',
+  THIS_WEEK: '4',
+  COMPLETED: '5',
+  OVERDUE: '6'
+}
 
 export default class UI {
   static initialize () {
@@ -16,6 +31,7 @@ export default class UI {
     this.addEventListeners()
     this.loadMyProjects()
     this.addNumOfTasksBadges()
+    document.querySelector('.project-item').click()
   }
 
   static cacheDOMElements () {
@@ -244,7 +260,6 @@ export default class UI {
     toggleStatusInput.addEventListener('change', (event) => {
       const taskId = event.target.dataset.taskId
       const projectId = event.target.dataset.projectId
-      console.log(event.target.dataset)
       this.handleToggleTaskStatus(taskId, projectId)
     })
     taskLi.appendChild(toggleStatusInput)
@@ -378,6 +393,44 @@ export default class UI {
   }
 
   static addNumOfTasksBadges () {
+    // Reset tasks for special projects
+    this.resetSpecialProjectsTasks()
+
+    // Get all tasks
+    const allTasks = this.getAllTasks()
+
+    // Today, start of this week, and end of this week
+    const today = startOfDay(new Date())
+    const startOfThisWeek = startOfWeek(today, { weekStartsOn: 0 })
+    const endOfThisWeek = endOfWeek(today, { weekStartsOn: 0 })
+
+    // Distribute tasks to special projects
+    allTasks.forEach((task) => {
+      const taskDueDate = parseISO(task.dueDate)
+
+      if (isToday(taskDueDate)) {
+        this.addTaskToSpecialProject(task, SPECIAL_PROJECT_IDS.TODAY)
+      }
+      if (isTomorrow(taskDueDate)) {
+        this.addTaskToSpecialProject(task, SPECIAL_PROJECT_IDS.TOMORROW)
+      }
+      if (
+        isWithinInterval(taskDueDate, {
+          start: startOfThisWeek,
+          end: endOfThisWeek
+        })
+      ) {
+        this.addTaskToSpecialProject(task, SPECIAL_PROJECT_IDS.THIS_WEEK)
+      }
+      if (task.completed) {
+        this.addTaskToSpecialProject(task, SPECIAL_PROJECT_IDS.COMPLETED)
+      }
+      if (isPast(taskDueDate) && !isToday(taskDueDate)) {
+        this.addTaskToSpecialProject(task, SPECIAL_PROJECT_IDS.OVERDUE)
+      }
+    })
+
+    // Update task badges
     document.querySelectorAll('.project-item').forEach((projectItem) => {
       const projectId = this.getProjectId(projectItem)
       const project = Storage.getProject(projectId)
@@ -385,6 +438,31 @@ export default class UI {
       projectItem.querySelector('.num-of-tasks').textContent =
         numOfTasks > 0 ? numOfTasks : ''
     })
+  }
+
+  static getAllTasks () {
+    const projects = Storage.getProjects()
+    return projects.reduce((allTasks, project) => {
+      return allTasks.concat(project.tasks)
+    }, [])
+  }
+
+  static resetSpecialProjectsTasks () {
+    Object.values(SPECIAL_PROJECT_IDS).forEach((projectId) => {
+      const project = Storage.getProject(projectId)
+      if (project) {
+        project.tasks = []
+        Storage.updateProject(project)
+      }
+    })
+  }
+
+  static addTaskToSpecialProject (task, projectId) {
+    const project = Storage.getProject(projectId)
+    if (project) {
+      project.tasks.push(task)
+      Storage.updateProject(project)
+    }
   }
 
   static addAddTaskBtn () {
