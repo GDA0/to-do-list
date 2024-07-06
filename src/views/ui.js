@@ -243,6 +243,7 @@ export default class UI {
 
     const toggleStatusInput = document.createElement('input')
     toggleStatusInput.type = 'checkbox'
+    toggleStatusInput.name = 'task-status'
     toggleStatusInput.classList.add(
       'form-check-input',
       'me-3',
