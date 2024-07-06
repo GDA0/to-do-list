@@ -206,9 +206,12 @@ export default class UI {
     const project = Storage.getProject(projectId)
     this.mainContentsContainer.innerHTML = ''
 
+    const headerContainer = document.createElement('div')
+    headerContainer.classList.add('d-flex')
     const projectNameH2 = document.createElement('h2')
     projectNameH2.textContent = project.name
-    this.mainContentsContainer.appendChild(projectNameH2)
+    headerContainer.appendChild(projectNameH2)
+    this.mainContentsContainer.appendChild(headerContainer)
 
     const tasksUl = document.createElement('ul')
     tasksUl.classList.add('list-group', 'list-group-flush', 'my-3')
@@ -232,6 +235,12 @@ export default class UI {
 
     if (!['2', '3', '4', '5', '6'].includes(projectId)) {
       this.addAddTaskBtn()
+      const controlBtns = document.createElement('div')
+      controlBtns.classList.add('ms-auto', 'd-flex', 'gap-3')
+      if (projectId !== '1') {
+        this.addControlBtns(controlBtns, projectId)
+        headerContainer.appendChild(controlBtns)
+      }
     }
 
     this.addNumOfTasksBadges()
@@ -497,6 +506,92 @@ export default class UI {
       this.populateParentProjectSelect()
     )
     this.mainContentsContainer.appendChild(addTaskBtn)
+  }
+
+  static addControlBtns (parentContainer, projectId) {
+    // Create edit button
+    const editBtn = document.createElement('button')
+    editBtn.className = 'btn btn-outline-secondary btn-sm rounded-circle ms-3'
+    editBtn.setAttribute('data-project-id', projectId)
+    editBtn.title = 'Edit project'
+
+    const editIcon = document.createElement('i')
+    editIcon.className = 'bi bi-pencil'
+    editBtn.appendChild(editIcon)
+
+    editBtn.addEventListener('click', () => {
+      this.handleEditProject(projectId)
+    })
+
+    // Create delete button
+    const deleteBtn = document.createElement('button')
+    deleteBtn.className = 'btn btn-outline-danger btn-sm rounded-circle'
+    deleteBtn.setAttribute('data-project-id', projectId)
+    deleteBtn.title = 'Delete project'
+
+    const deleteIcon = document.createElement('i')
+    deleteIcon.className = 'bi bi-trash3'
+    deleteBtn.appendChild(deleteIcon)
+
+    deleteBtn.addEventListener('click', () => {
+      this.handleDeleteProject(projectId)
+    })
+
+    parentContainer.appendChild(editBtn)
+    parentContainer.appendChild(deleteBtn)
+  }
+
+  static handleEditProject (projectId) {
+    const project = Storage.getProject(projectId)
+    if (!project) return
+
+    const editProjectModal = document.querySelector('#edit-project-modal')
+    const editProjectForm = editProjectModal.querySelector('form')
+
+    editProjectForm.querySelector('#project-name').value = project.name
+
+    this.showModal(editProjectModal)
+
+    // Handle form submission
+    editProjectForm.onsubmit = (event) => {
+      event.preventDefault()
+      if (editProjectForm.checkValidity()) {
+        const newName = editProjectForm.querySelector('#project-name').value
+        project.name = newName
+        Storage.updateProject(project)
+
+        this.loadMyProjects()
+
+        this.resetForm(editProjectModal.querySelector('.close-modal'))
+        this.hideModal(editProjectModal)
+
+        document.getElementById(projectId).closest('.project-item').click()
+      } else {
+        event.stopPropagation()
+        editProjectForm.classList.add('was-validated')
+      }
+    }
+  }
+
+  static handleDeleteProject (projectId) {
+    const confirmationModal = document.getElementById('confirmationModal')
+    confirmationModal.querySelector('.confirmation-message').textContent =
+      'Are you sure you want to delete this project? This action cannot be undone.'
+
+    this.showModal(confirmationModal)
+
+    let confirmDeleteButton = document.getElementById('confirmDeleteButton')
+
+    // Remove any previously attached event listeners to avoid multiple handlers
+    confirmDeleteButton.replaceWith(confirmDeleteButton.cloneNode(true))
+    confirmDeleteButton = document.getElementById('confirmDeleteButton')
+
+    confirmDeleteButton.addEventListener('click', () => {
+      Storage.removeProject(projectId)
+      this.loadMyProjects()
+      this.hideModal(confirmationModal)
+      document.querySelector('.project-item').click()
+    })
   }
 
   static populateParentProjectSelect (form = null) {
