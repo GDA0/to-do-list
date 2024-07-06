@@ -167,7 +167,7 @@ export default class UI {
 
     const paragraphElement = document.createElement('p')
     paragraphElement.id = project.id
-    paragraphElement.textContent = project.name
+    paragraphElement.textContent = this.truncateText(project.name)
 
     const spanElement = document.createElement('span')
     spanElement.classList.add(
@@ -209,7 +209,7 @@ export default class UI {
     const headerContainer = document.createElement('div')
     headerContainer.classList.add('d-flex')
     const projectNameH2 = document.createElement('h2')
-    projectNameH2.textContent = project.name
+    projectNameH2.textContent = this.truncateText(project.name)
     headerContainer.appendChild(projectNameH2)
     this.mainContentsContainer.appendChild(headerContainer)
 
@@ -244,6 +244,13 @@ export default class UI {
     }
 
     this.addNumOfTasksBadges()
+  }
+
+  static truncateText (text, maxLength = 20) {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + '...'
+    }
+    return text
   }
 
   static createTaskItem (tasksUl, task) {
@@ -605,10 +612,7 @@ export default class UI {
       .forEach((project) => {
         const option = document.createElement('option')
         option.value = project.id.toString()
-        option.textContent =
-          project.name.length > 30
-            ? project.name.slice(0, 30) + '...'
-            : project.name
+        option.textContent = this.truncateText(project.name)
         if (project.id === '1') option.selected = true
         parentProjectSelect.appendChild(option)
       })
